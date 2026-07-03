@@ -29,13 +29,12 @@ public class VacancyService {
     private final CompanyRepo companyRepo;
     private final VacancyMapper vacancyMapper;
 
-    public Vacancy getVacancyById(long id) {
-        return vacancyRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Vacancy not found with id: " + id));
+    public VacancyExportDTO getVacancyById(long id) {
+        return vacancyRepo.findById(id).map(vacancyMapper::toVacancyExportDTO).orElse(null);
     }
 
-    public List<Vacancy> getAllVacancies() {
-        return vacancyRepo.findAll();
+    public List<VacancyExportDTO> getAllVacancies() {
+        return vacancyRepo.findAll().stream().map(vacancyMapper::toVacancyExportDTO).toList();
     }
 
     public Vacancy addVacancy(Vacancy vacancy) {
@@ -104,6 +103,9 @@ public class VacancyService {
         if (updatedVacancy.getTitle() != null) existing.setTitle(updatedVacancy.getTitle());
         if (updatedVacancy.getDescription() != null) existing.setDescription(updatedVacancy.getDescription());
         if (updatedVacancy.getSalary() != null) existing.setSalary(updatedVacancy.getSalary());
+        if (updatedVacancy.getMinSalary() != null) existing.setMinSalary(updatedVacancy.getMinSalary());
+        if (updatedVacancy.getMaxSalary() != null) existing.setMaxSalary(updatedVacancy.getMaxSalary());
+        if (updatedVacancy.getStringSalary() != null) existing.setStringSalary(updatedVacancy.getStringSalary());
         if (updatedVacancy.getCity() != null) existing.setCity(updatedVacancy.getCity());
         if (updatedVacancy.getCompany() != null) existing.setCompany(updatedVacancy.getCompany());
         if (updatedVacancy.getPublishDate() != null) existing.setPublishDate(updatedVacancy.getPublishDate());

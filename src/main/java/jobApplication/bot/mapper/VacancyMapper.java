@@ -1,6 +1,7 @@
 package jobApplication.bot.mapper;
 
 import jobApplication.bot.dto.VacancyDTO;
+import jobApplication.bot.dto.VacancyExportDTO;
 import jobApplication.bot.model.City;
 import jobApplication.bot.model.Company;
 import jobApplication.bot.model.Vacancy;
@@ -8,8 +9,6 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.time.Instant;
-import java.time.ZoneId;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface VacancyMapper {
@@ -42,4 +41,18 @@ public interface VacancyMapper {
     @Mapping(source = "job_state", target = "state")
     @Mapping(source = "job_country", target = "country")
     City toCity(VacancyDTO dto);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "title", source = "title")
+    @Mapping(target = "description", source = "description")
+    @Mapping(target = "companyName", expression = "java(vacancy.getCompany() != null ? vacancy.getCompany().getName() : null)")
+    @Mapping(target = "cityName", expression = "java(vacancy.getCity() != null ? vacancy.getCity().getName() : null)")
+    @Mapping(target = "country", expression = "java(vacancy.getCity() != null ? vacancy.getCity().getCountry() : null)")
+    @Mapping(target = "salaryMin", source = "minSalary")
+    @Mapping(target = "salaryMax", source = "maxSalary")
+    @Mapping(target = "stringSalary", source = "stringSalary")
+    @Mapping(target = "url", source = "linkToOriginal")
+    @Mapping(target = "createdAt", source = "publishDate")
+    @Mapping(target = "isRemote", source = "isRemote")
+    VacancyExportDTO toVacancyExportDTO(Vacancy vacancy);
 }

@@ -1,5 +1,6 @@
 package jobApplication.bot.service;
 
+
 import jobApplication.bot.dto.ApiResponseDTO;
 import jobApplication.bot.dto.VacancyFilter;
 import lombok.extern.slf4j.Slf4j;
