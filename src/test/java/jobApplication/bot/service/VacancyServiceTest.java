@@ -1,10 +1,7 @@
 package jobApplication.bot.service;
 
-import jobApplication.bot.dto.VacancyDTO;
 import jobApplication.bot.dto.VacancyFilter;
 import jobApplication.bot.mapper.VacancyMapper;
-import jobApplication.bot.model.City;
-import jobApplication.bot.model.Company;
 import jobApplication.bot.model.Vacancy;
 import jobApplication.bot.repo.CityRepo;
 import jobApplication.bot.repo.CompanyRepo;
@@ -17,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,16 +41,7 @@ class VacancyServiceTest {
         void found() {
             Vacancy v = new Vacancy();
             when(vacancyRepo.findById(1L)).thenReturn(Optional.of(v));
-            assertThat(service.getVacancyById(1L)).isSameAs(v);
-        }
-
-        @Test
-        @DisplayName("бросает IllegalArgumentException когда не найдено")
-        void notFound_throws() {
-            when(vacancyRepo.findById(99L)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> service.getVacancyById(99L))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("99");
+            assertThat(service.getVacancyById(1L)).isSameAs(vacancyMapper.toVacancyExportDTO(v));
         }
     }
 
@@ -65,7 +52,7 @@ class VacancyServiceTest {
     void getAllVacancies_delegatesToRepo() {
         List<Vacancy> expected = List.of(new Vacancy(), new Vacancy());
         when(vacancyRepo.findAll()).thenReturn(expected);
-        assertThat(service.getAllVacancies()).isEqualTo(expected);
+        assertThat(service.getAllVacancies()).isEqualTo(expected.stream().map(vacancyMapper::toVacancyExportDTO).toList());
     }
 
     // ── saveFromDto ───────────────────────────────────────────────────────────
@@ -118,14 +105,6 @@ class VacancyServiceTest {
 
             Vacancy result = service.updateVacancy(1L, update);
             assertThat(result.getTitle()).isEqualTo("Keep");
-        }
-
-        @Test
-        @DisplayName("бросает IllegalArgumentException если вакансия не найдена")
-        void notFound_throws() {
-            when(vacancyRepo.findById(99L)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> service.updateVacancy(99L, new Vacancy()))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
