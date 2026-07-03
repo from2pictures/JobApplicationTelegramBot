@@ -34,22 +34,6 @@ jobs:
       - name: Build JAR
         run: mvn package -DskipTests
 
-      - name: Generate OpenAPI documentation
-        env:
-          # Пробрасываем секрет из GitHub в переменную окружения Linux
-          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
-          TELEGRAMBOT_USERNAME: ${{ secrets.TELEGRAMBOT_USERNAME }}
-          TELEGRAMBOT_TOKEN: ${{ secrets.TELEGRAMBOT_TOKEN }}
-        run: |
-          
-          java -jar target/*.jar &
-          APP_PID=$!
-          sleep 30
-          
-          curl http://localhost:8080/v3/api-docs.yaml -o openapi.yaml
-          
-          kill $APP_PID
-
       - name: Upload JAR artifact
         if: success()
         uses: actions/upload-artifact@v4
